@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_nav"
+    app:startDestination="@id/notesScreenFragment">
+
+    <fragment
+        android:id="@+id/notesScreenFragment"
+        android:name="com.laivinieks.noteapp.feature_note.presentation.notes.NotesScreenFragment"
+        android:label="NotesScreenFragment" >
+        <action
+            android:id="@+id/action_notesScreenFragment_to_addEditNotesFragment"
+            app:destination="@id/addEditNotesFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out" />
+    </fragment>
+    <fragment
+        android:id="@+id/addEditNotesFragment"
+        android:name="com.laivinieks.noteapp.feature_note.presentation.add_edit_notes.AddEditNotesFragment"
+        android:label="AddEditNotesFragment" />
+</navigation>
