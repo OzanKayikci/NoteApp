@@ -7,6 +7,7 @@ import com.laivinieks.noteapp.feature_note.data.repository.NoteRepositoryImpleme
 import com.laivinieks.noteapp.feature_note.domain.repository.NoteRepository
 import com.laivinieks.noteapp.feature_note.domain.usecase.AddNote
 import com.laivinieks.noteapp.feature_note.domain.usecase.DeleteNote
+import com.laivinieks.noteapp.feature_note.domain.usecase.GetNote
 import com.laivinieks.noteapp.feature_note.domain.usecase.GetNotes
 import com.laivinieks.noteapp.feature_note.domain.usecase.NoteUseCases
 import dagger.Module
@@ -41,7 +42,8 @@ object AppModule {
         return NoteUseCases(
             getNotes = GetNotes(repository),
             deleteNote = DeleteNote(repository),
-            addNote = AddNote(repository)
+            addNote = AddNote(repository),
+            getNote = GetNote(repository)
         )
     }
 }

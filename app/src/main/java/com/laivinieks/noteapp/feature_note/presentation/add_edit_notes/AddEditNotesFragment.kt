@@ -6,8 +6,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.laivinieks.noteapp.R
 import com.laivinieks.noteapp.databinding.FragmentAddEditNoteScreenBinding
 import com.laivinieks.noteapp.feature_note.domain.util.Constants
+import com.laivinieks.noteapp.other.Extentions.setStatusBarColor
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -28,8 +30,7 @@ class AddEditNotesFragment : Fragment() {
     }
 
     private fun setupRecycleView() {
-        colorAdapter = ColorAdapter(requireContext(),binding.noteBackground)
-        colorAdapter.submitList(Constants.colorList)
+        colorAdapter = ColorAdapter(Constants.colorList,requireContext(),binding.noteBackground,activity)
 
         val lmVertical =
             LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
@@ -43,6 +44,7 @@ class AddEditNotesFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
+        activity?.setStatusBarColor(R.color.primary_background, requireContext())
         _binding = null
     }
 
