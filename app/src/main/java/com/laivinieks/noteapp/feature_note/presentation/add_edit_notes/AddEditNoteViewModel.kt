@@ -1,5 +1,7 @@
 package com.laivinieks.noteapp.feature_note.presentation.add_edit_notes
 
+import android.os.Bundle
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
@@ -15,8 +17,9 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+
 @HiltViewModel
-class AddEditNoteViewMode @Inject constructor(private val noteUseCases: NoteUseCases,savedStateHandle: SavedStateHandle) : ViewModel() {
+class AddEditNoteViewModel @Inject constructor(private val noteUseCases: NoteUseCases, savedStateHandle: SavedStateHandle) : ViewModel() {
     private val _noteTitle = MutableLiveData<String>("")
     val noteTitle: LiveData<String> = _noteTitle!!
 
@@ -30,20 +33,38 @@ class AddEditNoteViewMode @Inject constructor(private val noteUseCases: NoteUseC
     val eventFlow = _eventFLow.asSharedFlow()
 
     private var currentNoteId: Int? = null
-    init {
 
-        savedStateHandle.get<Int>("noteId")?.let { noteId ->
-            if (noteId != -1){
+
+
+    init {
+        val previousState: Bundle? = savedStateHandle["note"]
+        Log.d("noteid", previousState.toString())
+
+        previousState?.getInt("noteId")?.let { noteId ->
+            if (noteId != -1) {
                 viewModelScope.launch {
                     noteUseCases.getNote(noteId)?.also {
-                        currentNoteId  = it.id
+                        currentNoteId = it.id
                         _noteTitle.value = it.title
                         _noteContent.value = it.content
                     }
                 }
             }
         }
+//        savedStateHandle.get<Int>("noteId")?.let { noteId ->
+//
+//            if (noteId != -1) {
+//                viewModelScope.launch {
+//                    noteUseCases.getNote(noteId)?.also {
+//                        currentNoteId = it.id
+//                        _noteTitle.value = it.title
+//                        _noteContent.value = it.content
+//                    }
+//                }
+//            }
+//        }
     }
+
     fun onEvent(event: AddEditNoteEvent) {
         when (event) {
             is AddEditNoteEvent.EnteredTitle -> {
@@ -66,7 +87,7 @@ class AddEditNoteViewMode @Inject constructor(private val noteUseCases: NoteUseC
                         _eventFLow.emit(UiEvent.SaveNote)
 
                     } catch (e: InvalidNoteException) {
-            _eventFLow.emit(UiEvent.ShowSnackBar(message = e.message?:"Couldn't save note"))
+                        _eventFLow.emit(UiEvent.ShowSnackBar(message = e.message ?: "Couldn't save note"))
                     }
 
                 }

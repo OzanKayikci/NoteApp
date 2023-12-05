@@ -1,13 +1,15 @@
 package com.laivinieks.noteapp.feature_note.domain.usecase
 
+import android.util.Log
 import com.laivinieks.noteapp.feature_note.domain.modal.Note
 import com.laivinieks.noteapp.feature_note.domain.repository.NoteRepository
 import com.laivinieks.noteapp.feature_note.domain.util.NoteOrder
 import com.laivinieks.noteapp.feature_note.domain.util.OrderType
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.count
 import kotlinx.coroutines.flow.map
 
-class GetNotes (private val repository: NoteRepository) {
+class GetNotes(private val repository: NoteRepository) {
     // use case should have just one public functions
 
     // invoke is an operator. so we overload invoke with operator keyword

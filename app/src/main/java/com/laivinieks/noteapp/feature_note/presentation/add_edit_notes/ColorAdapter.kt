@@ -1,7 +1,6 @@
 package com.laivinieks.noteapp.feature_note.presentation.add_edit_notes
 
 
-
 import android.app.Activity
 import android.content.Context
 import android.content.res.ColorStateList
@@ -24,7 +23,9 @@ class ColorAdapter(
     private val list: Array<Int>,
     private val context: Context,
     private val pageLayout: ConstraintLayout,
-    private val activity: Activity?
+    private val activity: Activity?,
+    private val viewModel: AddEditNoteViewModel,
+    private val defColor:Int
 ) :
     RecyclerView.Adapter<ColorAdapter.ColorViewHolder>() {
 
@@ -50,11 +51,11 @@ class ColorAdapter(
         }
     }
     private val differ = AsyncListDiffer(this, diffCallback)
-    private var defColor: Int = 0
+
 
     init {
         differ.submitList(list.toList())
-        defColor = differ.currentList[0]
+       // defColor = differ.currentList[0]
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ColorViewHolder {
@@ -76,12 +77,15 @@ class ColorAdapter(
             activity?.setStatusBarColor(color, context)
             oldSelection = holder.colorButton
             holder.colorButton.setStrokeColor(blackColor)
+            viewModel.onEvent(AddEditNoteEvent.ChangeColor(color))
+            pageLayout.backgroundTintList = currColor
         }
 
         holder.itemView.backgroundTintList = currColor
         holder.itemView.setOnClickListener {
             oldSelection?.setStrokeColor(ColorStateList.valueOf(oldSelection!!.solidColor))
 
+            viewModel.onEvent(AddEditNoteEvent.ChangeColor(color))
 
             holder.colorButton.setStrokeColor(blackColor)
 
@@ -95,8 +99,6 @@ class ColorAdapter(
         }
         //holder.bind(color)
     }
-
-
 
 
     override fun getItemCount(): Int {

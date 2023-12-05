@@ -21,7 +21,7 @@ class AddNote(
         }
         if (note.content.isBlank()) {
 
-            throw InvalidNoteException("The title of the note can't be empty.")
+            throw InvalidNoteException("The content of the note can't be empty.")
         }
     }
 }

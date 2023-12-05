@@ -1,10 +1,13 @@
 package com.laivinieks.noteapp.feature_note.presentation.notes
 
 
+import android.os.Bundle
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.savedstate.SavedStateRegistry
 import com.laivinieks.noteapp.feature_note.domain.modal.Note
 import com.laivinieks.noteapp.feature_note.domain.modal.NoteState
 import com.laivinieks.noteapp.feature_note.domain.usecase.NoteUseCases
@@ -17,9 +20,11 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+
 @HiltViewModel
 class NoteViewModel @Inject constructor(
-    private val noteUseCases: NoteUseCases
+    private val noteUseCases: NoteUseCases,
+    private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     private val _state = MutableLiveData(NoteState())
@@ -27,7 +32,6 @@ class NoteViewModel @Inject constructor(
 
     private var recentlyDeletedNote: Note? = null
     private var getNotesJob: Job? = null
-
 
 
     init {
@@ -70,6 +74,10 @@ class NoteViewModel @Inject constructor(
                     isOrderSectionVisible = !state.value!!.isOrderSectionVisible
                 )
             }
+
+            is NotesEvent.OpenNote -> {
+
+            }
         }
     }
 
@@ -78,11 +86,13 @@ class NoteViewModel @Inject constructor(
         getNotesJob?.cancel()
         getNotesJob = noteUseCases.getNotes(noteOrder)
             .onEach { notes ->
+
                 _state.value = state.value!!.copy(
                     notes = notes,
                     noteOrder = noteOrder,
                 )
             }.launchIn(viewModelScope)
+
     }
 
 }

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/noteCard"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="160dp"
@@ -17,7 +18,8 @@
             android:id="@+id/cardTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
+android:maxLines="2"
+            android:maxEms="4"
             android:fontFamily="@font/roboto_black"
             android:text="Title"
             android:textColor="@color/dark2"
@@ -26,26 +28,40 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
+            android:id="@+id/trash"
             android:layout_width="26dp"
             android:layout_height="26dp"
 
-            android:layout_marginTop="2dp"
             android:src="@drawable/baseline_delete_24"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/cardTitle" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
-            android:layout_width="wrap_content"
+            android:id="@+id/cardContent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:fontFamily="@font/roboto_medium"
-            android:text="content işerik content işerik content işerik content işerik content işerik content işerikcontent işerik"
+            android:maxLines="6"
             android:textColor="@color/dark2"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/cardTitle" />
 
+        <TextView
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/roboto_medium"
+            android:text="..."
+            android:textColor="@color/dark2"
+            android:textSize="16sp"
+
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.cardview.widget.CardView>

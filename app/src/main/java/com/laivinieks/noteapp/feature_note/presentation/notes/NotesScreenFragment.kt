@@ -6,17 +6,24 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import android.widget.RadioButton
 import android.widget.RadioGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import com.laivinieks.noteapp.R
 import com.laivinieks.noteapp.databinding.FragmentNotesScreenBinding
+import com.laivinieks.noteapp.feature_note.domain.util.Constants
 import com.laivinieks.noteapp.feature_note.domain.util.NoteOrder
 import com.laivinieks.noteapp.feature_note.domain.util.OrderType
+import com.laivinieks.noteapp.feature_note.domain.util.SnackBarButtonListener
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class NotesScreenFragment : Fragment() {
@@ -36,6 +43,7 @@ class NotesScreenFragment : Fragment() {
     private lateinit var bgFilters: RadioGroup
     private lateinit var bgSort: RadioGroup
 
+    private lateinit var adapter: NotesAdapter
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -45,10 +53,46 @@ class NotesScreenFragment : Fragment() {
         binding.filtersLayout.layoutTransition.enableTransitionType(LayoutTransition.CHANGING)
         buttonsHandle()
         getFilters()
+        setupRecycleView()
         filterListener()
-        // applyFilter()
+        applyFilter()
         observers()
         return binding.root
+    }
+
+    private fun noteOperation(notesEvent: NotesEvent) {
+
+        viewModel.onEvent(notesEvent).also {
+            when (notesEvent::class) {
+                NotesEvent.DeleteNote::class -> {
+                    Snackbar.make(requireView(), "Note Deleted", Snackbar.LENGTH_LONG).setAction("Undo", SnackBarButtonListener() {
+                        if (it == Constants.UNDO_SNACKBAR) {
+                            viewModel.onEvent(NotesEvent.RestoreNote)
+                        }
+                    }).show()
+                }
+
+                NotesEvent.OpenNote::class -> {
+                    //var bundle = bundleOf("noteId" to note.id!!)
+                    findNavController().navigate(R.id.action_notesScreenFragment_to_addEditNotesFragment)
+                }
+            }
+        }
+
+    }
+
+    private fun setupRecycleView() {
+        adapter = NotesAdapter(requireContext(), ::noteOperation)
+        val gridLayoutManager = GridLayoutManager(
+            requireContext(),
+            2,
+            LinearLayoutManager.VERTICAL,
+            false
+        )
+
+        binding.rwNotes.layoutManager = gridLayoutManager
+        binding.rwNotes.setHasFixedSize(true)
+        binding.rwNotes.adapter = adapter
     }
 
     override fun onDestroy() {
@@ -118,10 +162,14 @@ class NotesScreenFragment : Fragment() {
 
 
     private fun observers() {
-        viewModel.state.observe(viewLifecycleOwner) {
-            Log.d("new filter", it.noteOrder.orderType.toString())
-            applyFilter()
+        lifecycleScope.launch {
+            viewModel.state.observe(viewLifecycleOwner) {
+                adapter.submitList(it.notes)
+                applyFilter()
+            }
         }
+
+
     }
 
     private fun getFilters() {
