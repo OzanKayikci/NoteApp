@@ -1,6 +1,6 @@
 # NoteApp
 
-A simple project developed with <b>Kotlin</b>. This application tracks and records your runs with google maps.
+A simple note taking app developed with <b>Kotlin</b>. 
 
 ## MVVM + Clean Architecture
 I used *<B>Clean Architectural</B>* guidline together with *<B>MVVM</B>* Architectural Desing Patten
