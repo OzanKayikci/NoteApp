@@ -1,5 +1,6 @@
 package com.laivinieks.noteapp.feature_note.presentation.add_edit_notes
 
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -7,8 +8,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat.getColor
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -32,9 +35,7 @@ class AddEditNotesFragment : Fragment() {
 
     private lateinit var colorAdapter: ColorAdapter
     private var defColor: Int = 0
-    private val viewModel by lazy {
-        ViewModelProvider(this, defaultViewModelProviderFactory)[AddEditNoteViewModel::class.java]
-    }
+    private val viewModel: AddEditNoteViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -42,10 +43,19 @@ class AddEditNotesFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentAddEditNoteScreenBinding.inflate(inflater, container, false)
-        setupInputs()
         setupRecycleView()
         eventHandle()
 
+        arguments?.let {
+            val noteId = it.getInt("noteId")
+            Log.d("noteid", noteId.toString())
+            viewModel.getNote(noteId) { callback ->
+                if (callback) {
+                    setupInputs()
+
+                }
+            }
+        }
 
 
         return binding.root
@@ -55,6 +65,8 @@ class AddEditNotesFragment : Fragment() {
         binding.tvTitle.setText(viewModel.noteTitle.value!!)
         binding.tvContent.setText(viewModel.noteContent.value!!)
         defColor = viewModel.noteColor.value!!
+        binding.noteBackground.backgroundTintList = ColorStateList.valueOf(getColor(requireContext(), viewModel.noteColor.value!!))
+
     }
 
     private fun eventHandle() {

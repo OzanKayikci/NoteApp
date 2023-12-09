@@ -24,7 +24,6 @@ import javax.inject.Inject
 @HiltViewModel
 class NoteViewModel @Inject constructor(
     private val noteUseCases: NoteUseCases,
-    private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     private val _state = MutableLiveData(NoteState())
@@ -33,6 +32,8 @@ class NoteViewModel @Inject constructor(
     private var recentlyDeletedNote: Note? = null
     private var getNotesJob: Job? = null
 
+    private var _openingNoteId: Int? = null
+    val openingNoteId get()= _openingNoteId
 
     init {
 
@@ -76,7 +77,7 @@ class NoteViewModel @Inject constructor(
             }
 
             is NotesEvent.OpenNote -> {
-
+                _openingNoteId = event.note.id
             }
         }
     }

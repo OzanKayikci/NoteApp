@@ -19,7 +19,7 @@ import javax.inject.Inject
 
 
 @HiltViewModel
-class AddEditNoteViewModel @Inject constructor(private val noteUseCases: NoteUseCases, savedStateHandle: SavedStateHandle) : ViewModel() {
+class AddEditNoteViewModel @Inject constructor(private val noteUseCases: NoteUseCases) : ViewModel() {
     private val _noteTitle = MutableLiveData<String>("")
     val noteTitle: LiveData<String> = _noteTitle!!
 
@@ -32,38 +32,25 @@ class AddEditNoteViewModel @Inject constructor(private val noteUseCases: NoteUse
     private val _eventFLow = MutableSharedFlow<UiEvent>()
     val eventFlow = _eventFLow.asSharedFlow()
 
+
     private var currentNoteId: Int? = null
 
 
-
-    init {
-        val previousState: Bundle? = savedStateHandle["note"]
-        Log.d("noteid", previousState.toString())
-
-        previousState?.getInt("noteId")?.let { noteId ->
-            if (noteId != -1) {
-                viewModelScope.launch {
-                    noteUseCases.getNote(noteId)?.also {
-                        currentNoteId = it.id
-                        _noteTitle.value = it.title
-                        _noteContent.value = it.content
-                    }
+    fun getNote(noteId: Int, callback: (Boolean) -> Unit) {
+        if (noteId != -1) {
+            viewModelScope.launch {
+                callback(false)
+                noteUseCases.getNote(noteId)?.also {
+                    currentNoteId = it.id
+                    _noteTitle.value = it.title
+                    _noteContent.value = it.content
+                    _noteColor.value = it.color
+                    callback(true)
                 }
             }
         }
-//        savedStateHandle.get<Int>("noteId")?.let { noteId ->
-//
-//            if (noteId != -1) {
-//                viewModelScope.launch {
-//                    noteUseCases.getNote(noteId)?.also {
-//                        currentNoteId = it.id
-//                        _noteTitle.value = it.title
-//                        _noteContent.value = it.content
-//                    }
-//                }
-//            }
-//        }
     }
+
 
     fun onEvent(event: AddEditNoteEvent) {
         when (event) {

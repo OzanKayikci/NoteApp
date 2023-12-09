@@ -73,8 +73,9 @@ class NotesScreenFragment : Fragment() {
                 }
 
                 NotesEvent.OpenNote::class -> {
-                    //var bundle = bundleOf("noteId" to note.id!!)
-                    findNavController().navigate(R.id.action_notesScreenFragment_to_addEditNotesFragment)
+
+                    var bundle = bundleOf("noteId" to viewModel.openingNoteId!!)
+                    findNavController().navigate(R.id.action_notesScreenFragment_to_addEditNotesFragment,bundle)
                 }
             }
         }
